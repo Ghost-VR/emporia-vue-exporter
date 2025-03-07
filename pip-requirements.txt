@@ -1,0 +1,2 @@
+pyemvue==0.18.8
+aiohttp==3.11.13
