@@ -4,18 +4,20 @@ FROM python:latest
 LABEL org.opencontainers.image.authors="ghostvr"
 
 # ARG & ENV variables
-ARG PORT=9091
-ENV MERTIRCS_SERVER_PORT=$PORT
-ENV USE_LOGIN_INFO_FROM_ENV=1
+ENV METIRCS_SERVER_PORT=9090
 
 # Ports
-EXPOSE $PORT/tcp
+EXPOSE 9090/tcp
 
-# Code
-COPY code /usr/src/app
+# Files setup
 WORKDIR /usr/src/app
-COPY pip-requirements.txt ./
-RUN pip install --upgrade setuptools
-RUN pip install --no-cache-dir -r ./pip-requirements.txt
+COPY code pip-requirements.txt history.md docker_init/login.json.init ./
+RUN mkdir -p secrets
+RUN mv login.json.init secrets/login.json
 
+# Run initial setup
+RUN pip install --upgrade setuptools && \
+    pip install --no-cache-dir -r ./pip-requirements.txt
+
+# Entry point
 CMD ["python", "./main.py"]

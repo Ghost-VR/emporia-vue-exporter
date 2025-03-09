@@ -1,9 +1,13 @@
 import asyncio
 import json
+import time
+import logging
 
 from aiohttp import web
 
 from vue_exporter.vue_wrapper import VueWrapper
+
+_LOGGER = logging.getLogger(__name__)
 
 '''
   Metrics server that handles requests
@@ -66,8 +70,13 @@ class MetricsServer:
   async def handle_metrics(self, request):
     text = ''
 
+    start_time = round(time.time() * 1000)
+
     device_info = self._wrapper.get_device_info()
     all_metrics = self._wrapper.get_usage_all_metrics()
+
+    end_time = round(time.time() * 1000)
+    _LOGGER.info(f'Query duration: {end_time - start_time} ms')
 
     for metric in all_metrics:
       for channel in metric['channel_usages']:
